@@ -1,0 +1,23 @@
+{
+  "name": "cookie-clicker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Patrick Gaskill <patrick.gaskill@enfusionsystems.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/player"
+  },
+  "dependencies": {
+    "puppeteer": "^2.0.0"
+  },
+  "devDependencies": {
+    "husky": "^3.1.0",
+    "prettier": "1.19.1",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
