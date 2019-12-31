@@ -8,13 +8,8 @@ const puppeteer = require("puppeteer");
     waitUntil: "networkidle0"
   });
 
-  // await page.exposeFunction("clone", clone);
-  await page.addScriptTag({ path: "./node_modules/clone/clone.js" });
-
   const gameHandle = await page.evaluateHandle(() => window.Game);
   await page.waitFor(Game => Game.cookies !== undefined, {}, gameHandle);
-
-  let useLuckyBuffer = false;
 
   // Click the cookie
   setInterval(async () => {
@@ -37,13 +32,11 @@ const puppeteer = require("puppeteer");
     // Tabloid addiction achievement
     for (let i = 0; i < 50; ++i) Game.tickerL.click();
 
+    // God complex achievement
     // What's in a name achievement
-    Game.bakeryNamePrompt();
-    Game.bakeryNamePromptRandom();
+    Game.bakeryNameSet("orteil");
+    Game.bakeryNameSet(Game.RandomBakeryName());
   });
-
-  // Confirm the bakery name prompt
-  page.waitForSelector("a#promptOption0").then(confirm => confirm.click());
 
   // Cache the achievements seen to detect new ones
   let prevAchievementsWon = {};
@@ -51,12 +44,16 @@ const puppeteer = require("puppeteer");
   setInterval(async () => {
     await gameHandle.evaluate(Game => {
       // If golden cookie is available, click it
+      // Click one immediately for Early Bird achievement
       // Click it on the last second it's available for Fading Luck achievement
       const golden = Game.shimmers.find(
         s => s.type === "golden" && s.wrath === 0
       );
-      if (golden && !Game.Achievements["Early bird"].won) golden.pop(); // Pop one fast for Early bird
-      if (golden && golden.life <= Game.fps) golden.pop();
+      if (
+        golden &&
+        (!Game.Achievements["Early bird"].won || golden.life <= Game.fps)
+      )
+        golden.pop();
 
       // If it's Christmas season, click reindeer
       const reindeer = Game.shimmers.find(s => s.type === "reindeer");
@@ -137,6 +134,4 @@ const puppeteer = require("puppeteer");
         }
       });
   }, 500);
-
-  // If a sugar lump is available, click it
 })();
